@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: serviceA-postgres
+    environment:
+      POSTGRES_DB: service-a
+      POSTGRES_USER: service-a
+      POSTGRES_PASSWORD: service-a
+    ports:
+      - "15432:5432"
+    volumes:
+      - a_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  a_postgres_data:

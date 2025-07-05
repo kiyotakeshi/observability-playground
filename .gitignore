@@ -43,4 +43,7 @@ out/
 opentelemetry-javaagent.jar
 
 ### Claude Code ###
+/AI_INSTRUCTIONS.md
 serviceA/AI_INSTRUCTIONS.md
+serviceB/AI_INSTRUCTIONS.md
+serviceC/AI_INSTRUCTIONS.md

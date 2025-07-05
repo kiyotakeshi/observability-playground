@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: serviceB-postgres
+    environment:
+      POSTGRES_DB: service-b
+      POSTGRES_USER: service-b
+      POSTGRES_PASSWORD: service-b
+    ports:
+      - "25432:5432"
+    volumes:
+      - b_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: serviceB-redis
+    ports:
+      - "26379:6379"
+    volumes:
+      - b_redis_data:/data
+
+volumes:
+  b_postgres_data:
+  b_redis_data:

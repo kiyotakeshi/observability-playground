@@ -41,3 +41,6 @@ out/
 
 ###observability ###
 opentelemetry-javaagent.jar
+
+### Claude Code ###
+serviceA/AI_INSTRUCTIONS.md

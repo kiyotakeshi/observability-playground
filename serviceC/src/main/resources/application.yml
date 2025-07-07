@@ -1,5 +1,37 @@
 spring:
   application:
     name: serviceC
+  datasource:
+    url: jdbc:postgresql://localhost:35432/service-c
+    username: service-c
+    password: service-c
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # create-drop: アプリ起動時にテーブル作成、終了時に削除（開発用）
+      # create: アプリ起動時にテーブル作成（既存データは消去）
+      # update: アプリ起動時にテーブル構造を更新（データは保持）
+      # validate: アプリ起動時にテーブル構造を検証のみ
+      # none: 何もしない（本番環境推奨）
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    # Hibernate がテーブルを作成してから data.sql を実行
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+  graphql:
+    graphiql:
+      enabled: true
 server:
     port: 8082
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

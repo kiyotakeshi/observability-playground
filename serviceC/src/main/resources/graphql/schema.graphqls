@@ -1,0 +1,18 @@
+type Deal {
+    id: ID!
+    title: String!
+    description: String!
+    employeeId: Long!
+    companyId: Long!
+    amount: Float!
+    status: String!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Query {
+    deals: [Deal]
+    deal(id: ID!): Deal
+}
+
+scalar Long

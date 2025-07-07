@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "1.9.25"
+	id("com.netflix.dgs.codegen") version "7.0.3"
 }
 
 group = "observability.com.example"
@@ -19,15 +20,22 @@ repositories {
 	mavenCentral()
 }
 
+configurations.all {
+	resolutionStrategy {
+		force("com.graphql-java:java-dataloader:5.0.0")
+	}
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-graphql")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("com.graphql-java:graphql-java-extended-scalars:22.0")
 	runtimeOnly("org.postgresql:postgresql")
 
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
+//	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -35,11 +43,11 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
-}
+//kotlin {
+//	compilerOptions {
+//		freeCompilerArgs.addAll("-Xjsr305=strict")
+//	}
+//}
 
 allOpen {
 	annotation("jakarta.persistence.Entity")
@@ -50,3 +58,10 @@ allOpen {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.generateJava {
+	schemaPaths.add("${projectDir}/src/main/resources/graphql")
+	packageName = "observability.com.example.serviceC.codegen"
+	generateClient = true
+}
+

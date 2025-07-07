@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: serviceC-postgres
+    environment:
+      POSTGRES_DB: service-c
+      POSTGRES_USER: service-c
+      POSTGRES_PASSWORD: service-c
+    ports:
+      - "35432:5432"
+    volumes:
+      - c_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  c_postgres_data:

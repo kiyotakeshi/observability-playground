@@ -10,9 +10,22 @@ type Deal {
     updatedAt: String!
 }
 
+input DealInput {
+    title: String!
+    description: String!
+    employeeId: Long!
+    companyId: Long!
+    amount: Float!
+    status: String!
+}
+
 type Query {
     deals: [Deal]
     deal(id: ID!): Deal
+}
+
+type Mutation {
+    createDeal(input: DealInput!): Deal
 }
 
 scalar Long

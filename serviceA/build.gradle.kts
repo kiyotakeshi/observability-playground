@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "1.9.25"
+	id("com.apollographql.apollo3") version "3.8.4"
 }
 
 group = "observability.com.example"
@@ -25,6 +26,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("com.apollographql.apollo3:apollo-runtime:3.8.4")
 //	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.16.0")
 //	implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.49.0")
 
@@ -49,4 +51,13 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+apollo {
+	service("servicec") {
+		packageName.set("observability.com.example.serviceA.graphql")
+		schemaFile.set(file("src/main/graphql/schema.graphqls"))
+		srcDir("src/main/graphql")
+		mapScalar("Long", "kotlin.Long")
+	}
 }

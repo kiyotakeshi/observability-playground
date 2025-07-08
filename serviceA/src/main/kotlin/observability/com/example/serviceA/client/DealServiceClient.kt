@@ -1,79 +1,59 @@
 package observability.com.example.serviceA.client
 
+import com.apollographql.apollo3.ApolloClient
+import kotlinx.coroutines.runBlocking
+import observability.com.example.serviceA.graphql.CreateDealMutation
+import observability.com.example.serviceA.graphql.type.DealInput
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestTemplate
 
 @Component
 class DealServiceClient(
-    @Qualifier("serviceCRestTemplate")
-    private val restTemplate: RestTemplate
+    private val apolloClient: ApolloClient
 ) {
     private val logger = LoggerFactory.getLogger(DealServiceClient::class.java)
-    private val serviceCBaseUrl = "http://localhost:8082"
 
     fun createDeal(input: CreateDealInput): DealGraphQLResponse {
         logger.info("serviceC に deal の作成を開始: employeeId={}, companyId={}, title={}", 
             input.employeeId, input.companyId, input.title)
 
-        val graphqlQuery = """
-            mutation CreateDeal(${'$'}input: DealInput!) {
-                createDeal(input: ${'$'}input) {
-                    id
-                    title
-                    description
-                    employeeId
-                    companyId
-                    amount
-                    status
-                    createdAt
-                    updatedAt
-                }
-            }
-        """.trimIndent()
-
-        val requestBody = mapOf(
-            "query" to graphqlQuery,
-            "variables" to mapOf("input" to input)
+        val dealInput = DealInput(
+            title = input.title,
+            description = input.description,
+            employeeId = input.employeeId,
+            companyId = input.companyId,
+            amount = input.amount,
+            status = input.status
         )
 
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_JSON
-        }
-        val httpEntity = HttpEntity(requestBody, headers)
-
         return try {
-            val response = restTemplate.exchange(
-                "$serviceCBaseUrl/graphql",
-                HttpMethod.POST,
-                httpEntity,
-                GraphQLResponse::class.java
-            )
-
-            val graphqlResponse = response.body
-                ?: throw RuntimeException("Deal の作成に失敗しました: レスポンスが空です")
-
-            if (graphqlResponse.errors != null && graphqlResponse.errors.isNotEmpty()) {
-                logger.error("serviceC での deal 作成でエラーが発生: errors={}", graphqlResponse.errors)
-                throw RuntimeException("Deal 作成でエラーが発生しました: ${graphqlResponse.errors.joinToString(", ") { it.message }}")
+            val response = runBlocking {
+                apolloClient.mutation(CreateDealMutation(dealInput)).execute()
             }
 
-            graphqlResponse.data?.createDeal?.let { deal ->
+            if (response.hasErrors()) {
+                val errors = response.errors?.joinToString(", ") { it.message }
+                logger.error("serviceC での deal 作成でエラーが発生: errors={}", errors)
+                throw RuntimeException("Deal 作成でエラーが発生しました: $errors")
+            }
+
+            response.data?.createDeal?.let { deal ->
+                val result = DealGraphQLResponse(
+                    id = deal.id,
+                    title = deal.title,
+                    description = deal.description,
+                    employeeId = deal.employeeId,
+                    companyId = deal.companyId,
+                    amount = deal.amount,
+                    status = deal.status,
+                    createdAt = deal.createdAt,
+                    updatedAt = deal.updatedAt
+                )
                 logger.info("serviceC で deal の作成が成功: dealId={}, employeeId={}, companyId={}", 
-                    deal.id, deal.employeeId, deal.companyId)
-                deal
+                    result.id, result.employeeId, result.companyId)
+                result
             } ?: throw RuntimeException("Deal の作成に失敗しました: データが空です")
 
-        } catch (ex: HttpClientErrorException) {
-            logger.error("serviceC との通信でHTTPエラーが発生: status={}, body={}", 
-                ex.statusCode, ex.responseBodyAsString, ex)
-            throw RuntimeException("Deal サービスとの通信に失敗しました: ${ex.statusCode}", ex)
         } catch (ex: Exception) {
             logger.error("serviceC との通信で予期しないエラーが発生", ex)
             throw RuntimeException("Deal サービスとの通信に失敗しました", ex)
@@ -88,21 +68,6 @@ data class CreateDealInput(
     val companyId: Long,
     val amount: Double,
     val status: String
-)
-
-data class GraphQLResponse(
-    val data: GraphQLData?,
-    val errors: List<GraphQLError>?
-)
-
-data class GraphQLData(
-    val createDeal: DealGraphQLResponse?
-)
-
-data class GraphQLError(
-    val message: String,
-    val path: List<String>? = null,
-    val extensions: Map<String, Any>? = null
 )
 
 data class DealGraphQLResponse(

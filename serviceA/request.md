@@ -25,7 +25,7 @@ curl -X POST http://localhost:8080/employees/deals \
     "description": "大手クライアントとの年間契約による新システム開発プロジェクト",
     "amount": 1500000.00,
     "status": "PENDING"
-  }' | jq .
+  }' -s | jq .
 ```
 
 ### 正常レスポンス例
@@ -56,7 +56,7 @@ curl -X POST http://localhost:8080/employees/deals \
     "description": "テスト",
     "amount": 100000.00,
     "status": "PENDING"
-  }' | jq .
+  }' -s | jq .
 ```
 
 #### 存在しない company ID
@@ -70,7 +70,7 @@ curl -X POST http://localhost:8080/employees/deals \
     "description": "テスト",
     "amount": 100000.00,
     "status": "PENDING"
-  }' | jq .
+  }' -s | jq .
 ```
 
 #### バリデーションエラー
@@ -84,7 +84,7 @@ curl -X POST http://localhost:8080/employees/deals \
     "description": "",
     "amount": -100.00,
     "status": ""
-  }' | jq .
+  }' -s | jq .
 ```
 
 ## API 動作確認手順

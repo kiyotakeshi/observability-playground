@@ -1,0 +1,13 @@
+mutation CreateDeal($input: DealInput!) {
+    createDeal(input: $input) {
+        id
+        title
+        description
+        employeeId
+        companyId
+        amount
+        status
+        createdAt
+        updatedAt
+    }
+}

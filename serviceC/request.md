@@ -33,3 +33,28 @@ query MyQuery {
   }
 }
 ```
+
+### 新しい Deal を作成
+
+```graphql
+mutation CreateDeal {
+  createDeal(input: {
+    title: "新規営業案件"
+    description: "大手クライアントとの年間契約"
+    employeeId: 1
+    companyId: 1
+    amount: 1500000.0
+    status: "PENDING"
+  }) {
+    id
+    title
+    description
+    employeeId
+    companyId
+    amount
+    status
+    createdAt
+    updatedAt
+  }
+}
+```

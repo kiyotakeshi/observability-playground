@@ -1,10 +1,13 @@
 package observability.com.example.serviceC.controller
 
 import observability.com.example.serviceC.codegen.types.Deal
+import observability.com.example.serviceC.codegen.types.DealInput
 import observability.com.example.serviceC.service.DealService
 import org.springframework.graphql.data.method.annotation.Argument
+import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
+import java.math.BigDecimal
 
 @Controller
 class DealController(
@@ -41,6 +44,30 @@ class DealController(
             status = dealById.status,
             createdAt = dealById.createdAt.toString(),
             updatedAt = dealById.updatedAt.toString()
+        )
+    }
+
+    @MutationMapping
+    fun createDeal(@Argument input: DealInput): Deal {
+        val createdDeal = dealService.createDeal(
+            title = input.title,
+            description = input.description,
+            employeeId = input.employeeId,
+            companyId = input.companyId,
+            amount = BigDecimal.valueOf(input.amount),
+            status = input.status
+        )
+        
+        return Deal(
+            id = createdDeal.id.toString(),
+            title = createdDeal.title,
+            description = createdDeal.description,
+            employeeId = createdDeal.employeeId,
+            companyId = createdDeal.companyId,
+            amount = createdDeal.amount.toDouble(),
+            status = createdDeal.status,
+            createdAt = createdDeal.createdAt.toString(),
+            updatedAt = createdDeal.updatedAt.toString()
         )
     }
 }

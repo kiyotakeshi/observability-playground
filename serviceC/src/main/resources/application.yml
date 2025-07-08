@@ -13,7 +13,7 @@ spring:
       # update: アプリ起動時にテーブル構造を更新（データは保持）
       # validate: アプリ起動時にテーブル構造を検証のみ
       # none: 何もしない（本番環境推奨）
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:

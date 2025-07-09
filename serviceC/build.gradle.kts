@@ -33,6 +33,9 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.graphql-java:graphql-java-extended-scalars:22.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.16.0")
+	implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.49.0")
+
 	runtimeOnly("org.postgresql:postgresql")
 
 //	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -63,5 +66,16 @@ tasks.generateJava {
 	schemaPaths.add("${projectDir}/src/main/resources/graphql")
 	packageName = "observability.com.example.serviceC.codegen"
 	generateClient = true
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+	jvmArgs = listOf(
+		"-javaagent:${project.rootDir}/opentelemetry-javaagent.jar",
+		"-Dotel.service.name=serviceC",
+		"-Dotel.exporter.otlp.endpoint=http://localhost:4317",
+		"-Dotel.exporter.otlp.protocol=grpc",
+		"-Dotel.metrics.exporter=none",
+		"-Dotel.logs.exporter=none",
+	)
 }
 

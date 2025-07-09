@@ -11,3 +11,7 @@ curl -O --location https://github.com/open-telemetry/opentelemetry-java-instrume
 ```sh
 ./gradlew bootRun
 ```
+
+## Jeager
+
+http://localhost:16686/search

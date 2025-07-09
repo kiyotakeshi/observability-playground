@@ -27,8 +27,8 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.apollographql.apollo3:apollo-runtime:3.8.4")
-//	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.16.0")
-//	implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.49.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.16.0")
+	implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.49.0")
 
 	runtimeOnly("org.postgresql:postgresql")
 
@@ -60,4 +60,15 @@ apollo {
 		srcDir("src/main/graphql")
 		mapScalar("Long", "kotlin.Long")
 	}
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+	jvmArgs = listOf(
+		"-javaagent:${project.rootDir}/opentelemetry-javaagent.jar",
+		"-Dotel.service.name=serviceA",
+		"-Dotel.exporter.otlp.endpoint=http://localhost:4317",
+		"-Dotel.exporter.otlp.protocol=grpc",
+		"-Dotel.metrics.exporter=none",
+		"-Dotel.logs.exporter=none",
+	)
 }

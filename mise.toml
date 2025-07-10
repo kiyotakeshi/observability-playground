@@ -1,0 +1,35 @@
+[tasks.run-service-a]
+description = "Run serviceA with Docker Compose and Spring Boot"
+run = """
+cd serviceA
+echo "Starting serviceA Docker Compose..."
+docker compose up -d
+echo "Waiting for containers to be ready..."
+sleep 3
+echo "Starting serviceA Spring Boot application..."
+./gradlew bootRun
+"""
+
+[tasks.run-service-b]
+description = "Run serviceB with Docker Compose and Spring Boot"
+run = """
+cd serviceB
+echo "Starting serviceB Docker Compose..."
+docker compose up -d
+echo "Waiting for containers to be ready..."
+sleep 3
+echo "Starting serviceB Spring Boot application..."
+./gradlew bootRun
+"""
+
+[tasks.run-service-c]
+description = "Run serviceC with Docker Compose and Spring Boot"
+run = """
+cd serviceC
+echo "Starting serviceC Docker Compose..."
+docker compose up -d
+echo "Waiting for containers to be ready..."
+sleep 3
+echo "Starting serviceC Spring Boot application..."
+./gradlew bootRun
+"""

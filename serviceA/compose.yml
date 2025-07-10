@@ -22,5 +22,23 @@ services:
       - "16686:16686"
       - "4317:4317"
 
+  servicea:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: serviceA
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-a
+      OTEL_SERVICE_NAME: serviceA
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - jaeger
+
 volumes:
   a_postgres_data:

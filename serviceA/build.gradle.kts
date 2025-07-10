@@ -64,11 +64,15 @@ apollo {
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
 	jvmArgs = listOf(
-		"-javaagent:${project.rootDir}/opentelemetry-javaagent.jar",
-		"-Dotel.service.name=serviceA",
-		"-Dotel.exporter.otlp.endpoint=http://localhost:4317",
-		"-Dotel.exporter.otlp.protocol=grpc",
-		"-Dotel.metrics.exporter=none",
-		"-Dotel.logs.exporter=none",
+		"-javaagent:${project.rootDir}/opentelemetry-javaagent.jar"
+	)
+	
+	// 環境変数でデフォルト値を設定（オーバーライド可能）
+	environment = environment + mapOf(
+		"OTEL_SERVICE_NAME" to "serviceA",
+		"OTEL_EXPORTER_OTLP_ENDPOINT" to (System.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") ?: "http://localhost:4317"),
+		"OTEL_EXPORTER_OTLP_PROTOCOL" to "grpc",
+		"OTEL_METRICS_EXPORTER" to "none",
+		"OTEL_LOGS_EXPORTER" to "none"
 	)
 }

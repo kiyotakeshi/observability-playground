@@ -36,6 +36,10 @@ services:
       OTEL_LOGS_EXPORTER: none
     ports:
       - "8080:8080"
+    volumes:
+      # ホスト側の opentelemetry-javaagent.jar をコンテナにマウント
+      # 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
+      - ../opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar:ro
     depends_on:
       - postgres
       - jaeger

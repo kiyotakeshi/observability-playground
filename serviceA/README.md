@@ -1,10 +1,8 @@
 # ServiceA
 
-## Prepare for opentelemetry-javaagent.jar
+## Prepare for opentelemetry-javaagent.jar in root directory
 
-```sh
-curl -O --location https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.16.0/opentelemetry-javaagent.jar
-```
+[root directory README](../README.md) `Prepare for opentelemetry-javaagent.jar` part
 
 ## Run
 
@@ -12,6 +10,6 @@ curl -O --location https://github.com/open-telemetry/opentelemetry-java-instrume
 ./gradlew bootRun
 ```
 
-## Jeager
+## Jeager UI
 
 http://localhost:16686/search

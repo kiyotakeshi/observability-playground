@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 # ビルドステージから JAR ファイルをコピー
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# OpenTelemetry エージェントをコピー
-COPY ./opentelemetry-javaagent.jar ./
+# OpenTelemetry エージェントは外部からマウントする想定（起動時に外部から渡すためコメントアウト）
+# COPY ./opentelemetry-javaagent.jar ./
 
 # 実行ユーザーを作成（セキュリティ向上）
 RUN groupadd -r appuser && useradd -r -g appuser -m appuser

@@ -13,14 +13,34 @@ services:
     volumes:
       - a_postgres_data:/var/lib/postgresql/data
 
-  jaeger:
-    image: jaegertracing/all-in-one:1.54
-    container_name: serviceA-jaeger
+  servicea:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: serviceA
     environment:
-      - COLLECTOR_OTLP_ENABLED=true
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-a
+      OTEL_SERVICE_NAME: serviceA
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
     ports:
-      - "16686:16686"
-      - "4317:4317"
+      - "8080:8080"
+    volumes:
+      # ホスト側の opentelemetry-javaagent.jar をコンテナにマウント
+      # 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
+      - ../opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar:ro
+    depends_on:
+      - postgres
+    networks:
+      - default
+      - observability
+
+networks:
+  observability:
+    external: true
+    name: observability-network
 
 volumes:
   a_postgres_data:

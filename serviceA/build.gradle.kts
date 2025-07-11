@@ -64,7 +64,8 @@ apollo {
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
 	jvmArgs = listOf(
-		"-javaagent:${project.rootDir}/opentelemetry-javaagent.jar",
+		// 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
+		"-javaagent:${project.rootDir.parent}/opentelemetry-javaagent.jar",
 		"-Dotel.service.name=serviceA",
 		"-Dotel.exporter.otlp.endpoint=http://localhost:4317",
 		"-Dotel.exporter.otlp.protocol=grpc",

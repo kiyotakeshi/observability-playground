@@ -1,0 +1,44 @@
+# Build artifacts
+build/
+target/
+*.jar
+# 起動時に外部から渡すためコメントアウト
+# !opentelemetry-javaagent.jar
+*.war
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+AI_INSTRUCTIONS.md
+request.md
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Logs
+logs/
+*.log
+
+# Test files and reports
+test-results/
+build/reports/
+
+# Temporary files
+*.tmp
+*.temp

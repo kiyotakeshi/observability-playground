@@ -21,6 +21,38 @@ services:
     volumes:
       - b_redis_data:/data
 
+  serviceb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: serviceB
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-b
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      OTEL_SERVICE_NAME: serviceB
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+    ports:
+      - "8081:8081"
+    volumes:
+      # ホスト側の opentelemetry-javaagent.jar をコンテナにマウント
+      # 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
+      - ../opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar:ro
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - default
+      - observability
+
+networks:
+  observability:
+    external: true
+    name: observability-network
+
 volumes:
   b_postgres_data:
   b_redis_data:

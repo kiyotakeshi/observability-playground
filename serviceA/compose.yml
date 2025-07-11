@@ -13,15 +13,6 @@ services:
     volumes:
       - a_postgres_data:/var/lib/postgresql/data
 
-  jaeger:
-    image: jaegertracing/all-in-one:1.54
-    container_name: serviceA-jaeger
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    ports:
-      - "16686:16686"
-      - "4317:4317"
-
   servicea:
     build:
       context: .
@@ -42,7 +33,14 @@ services:
       - ../opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar:ro
     depends_on:
       - postgres
-      - jaeger
+    networks:
+      - default
+      - observability
+
+networks:
+  observability:
+    external: true
+    name: observability-network
 
 volumes:
   a_postgres_data:

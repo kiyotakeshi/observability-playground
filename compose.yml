@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.54
+    container_name: shared-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    networks:
+      - observability
+
+networks:
+  observability:
+    name: observability-network
+    driver: bridge

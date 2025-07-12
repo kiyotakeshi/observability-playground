@@ -4,9 +4,15 @@
 
 [root directory README](../README.md) `Prepare for opentelemetry-javaagent.jar` part
 
+## Run containers
+
+```shell
+mise run start
+```
+
 ## Run
 
-```sh
+```shell
 ./gradlew bootRun
 ```
 

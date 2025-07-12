@@ -1,30 +1,26 @@
 [tasks.start]
 description = "すべての service とミドルウェアをコンテナ起動する"
-run = """
-echo "Starting shared services..."
-docker compose up -d
-echo "Starting serviceA..."
-docker compose -f serviceA/compose_serviceA.yml up -d
-echo "Starting serviceB..."
-docker compose -f serviceB/compose_serviceB.yml up -d
-echo "Starting serviceC..."
-docker compose -f serviceC/compose_serviceC.yml up -d
-wait
-"""
+run = [
+    "mise run start-service-a",
+    "mise run start-service-b",
+    "mise run start-service-c"
+]
 
 [tasks.stop]
 description = "すべてのコンテナを削除する"
-run = """
-echo "Stopping all Docker containers..."
-docker compose -f serviceA/compose_serviceA.yml down
-docker compose -f serviceB/compose_serviceB.yml down
-docker compose -f serviceC/compose_serviceC.yml down
-docker compose down
-sleep 5
-echo "All services stopped."
-"""
+run = [
+    """
+    echo "Stopping all Docker containers..."
+    docker compose down
+    """,
+    "mise run stop-service-a",
+    "mise run stop-service-b",
+    "mise run stop-service-c",
+    "echo All services stopped."
+]
 
-[tasks.run-service-a]
+
+[tasks.start-service-a]
 description = "service A をコンテナ起動する"
 run = """
 echo "Starting shared services..."
@@ -33,7 +29,14 @@ echo "Starting serviceA..."
 docker compose -f serviceA/compose_serviceA.yml up -d
 """
 
-[tasks.run-service-b]
+[tasks.stop-service-a]
+description = "service A をコンテナ起動する"
+run = """
+echo "Stopping serviceA..."
+docker compose -f serviceA/compose_serviceA.yml down
+"""
+
+[tasks.start-service-b]
 description = "service B をコンテナ起動する"
 run = """
 echo "Starting shared services..."
@@ -42,11 +45,25 @@ echo "Starting serviceB..."
 docker compose -f serviceB/compose_serviceB.yml up -d
 """
 
-[tasks.run-service-c]
+[tasks.stop-service-b]
+description = "service B をコンテナ起動する"
+run = """
+echo "Stopping serviceB..."
+docker compose -f serviceB/compose_serviceB.yml down
+"""
+
+[tasks.start-service-c]
 description = "service C をコンテナ起動する"
 run = """
 echo "Starting shared services..."
 docker compose up -d
 echo "Starting serviceC..."
 docker compose -f serviceC/compose_serviceC.yml up -d
+"""
+
+[tasks.stop-service-c]
+description = "service C をコンテナ起動する"
+run = """
+echo "Stopping serviceC..."
+docker compose -f serviceC/compose_serviceC.yml down
 """

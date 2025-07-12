@@ -1,35 +1,52 @@
-[tasks.run-service-a]
-description = "Run serviceA with Docker Compose and Spring Boot"
+[tasks.start]
+description = "すべての service とミドルウェアをコンテナ起動する"
 run = """
-cd serviceA
-echo "Starting serviceA Docker Compose..."
+echo "Starting shared services..."
 docker compose up -d
-echo "Waiting for containers to be ready..."
-sleep 3
-echo "Starting serviceA Spring Boot application..."
-./gradlew bootRun
+echo "Starting serviceA..."
+docker compose -f serviceA/compose_serviceA.yml up -d
+echo "Starting serviceB..."
+docker compose -f serviceB/compose_serviceB.yml up -d
+echo "Starting serviceC..."
+docker compose -f serviceC/compose_serviceC.yml up -d
+wait
+"""
+
+[tasks.stop]
+description = "すべてのコンテナを削除する"
+run = """
+echo "Stopping all Docker containers..."
+docker compose -f serviceA/compose_serviceA.yml down
+docker compose -f serviceB/compose_serviceB.yml down
+docker compose -f serviceC/compose_serviceC.yml down
+docker compose down
+sleep 5
+echo "All services stopped."
+"""
+
+[tasks.run-service-a]
+description = "service A をコンテナ起動する"
+run = """
+echo "Starting shared services..."
+docker compose up -d
+echo "Starting serviceA..."
+docker compose -f serviceA/compose_serviceA.yml up -d
 """
 
 [tasks.run-service-b]
-description = "Run serviceB with Docker Compose and Spring Boot"
+description = "service B をコンテナ起動する"
 run = """
-cd serviceB
-echo "Starting serviceB Docker Compose..."
+echo "Starting shared services..."
 docker compose up -d
-echo "Waiting for containers to be ready..."
-sleep 3
-echo "Starting serviceB Spring Boot application..."
-./gradlew bootRun
+echo "Starting serviceB..."
+docker compose -f serviceB/compose_serviceB.yml up -d
 """
 
 [tasks.run-service-c]
-description = "Run serviceC with Docker Compose and Spring Boot"
+description = "service C をコンテナ起動する"
 run = """
-cd serviceC
-echo "Starting serviceC Docker Compose..."
+echo "Starting shared services..."
 docker compose up -d
-echo "Waiting for containers to be ready..."
-sleep 3
-echo "Starting serviceC Spring Boot application..."
-./gradlew bootRun
+echo "Starting serviceC..."
+docker compose -f serviceC/compose_serviceC.yml up -d
 """

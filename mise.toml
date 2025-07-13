@@ -19,7 +19,6 @@ run = [
     "echo All services stopped."
 ]
 
-
 [tasks.start-service-a]
 description = "service A をコンテナ起動する"
 run = """

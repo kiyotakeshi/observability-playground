@@ -2,6 +2,7 @@ package observability.com.example.serviceA.client
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
@@ -13,7 +14,9 @@ class CompanyServiceClient(
     private val restTemplate: RestTemplate
 ) {
     private val logger = LoggerFactory.getLogger(CompanyServiceClient::class.java)
-    private val serviceBBaseUrl = "http://localhost:8081"
+    
+    @Value("\${serviceb.url:http://localhost:8081}")
+    private lateinit var serviceBBaseUrl: String
 
     fun checkCompanyExists(companyId: Long): Boolean {
         logger.info("serviceB に company の存在チェックを開始: companyId={}", companyId)

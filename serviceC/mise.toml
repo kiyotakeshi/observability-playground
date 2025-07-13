@@ -1,0 +1,13 @@
+[tasks.start]
+description = "すべての service とミドルウェアをコンテナ起動する"
+run = """
+docker compose -f ../compose.yml up -d
+docker compose -f compose_serviceC.yml up postgres -d
+"""
+
+[tasks.stop]
+description = "すべてのコンテナを削除する"
+run = """
+docker compose -f compose_serviceC.yml down postgres
+docker compose -f ../compose.yml down
+"""

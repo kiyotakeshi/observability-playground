@@ -1,32 +1,32 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
-    container_name: serviceC-postgres
+    container_name: serviceA-postgres
     environment:
-      POSTGRES_DB: service-c
-      POSTGRES_USER: service-c
-      POSTGRES_PASSWORD: service-c
+      POSTGRES_DB: service-a
+      POSTGRES_USER: service-a
+      POSTGRES_PASSWORD: service-a
     ports:
-      - "35432:5432"
+      - "15432:5432"
     volumes:
-      - c_postgres_data:/var/lib/postgresql/data
+      - a_postgres_data:/var/lib/postgresql/data
 
-  servicec:
+  servicea:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: serviceC
+    container_name: serviceA
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-c
-      OTEL_SERVICE_NAME: serviceC
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-a
+      SERVICEB_URL: http://serviceB:8081
+      SERVICEC_GRAPHQL_URL: http://serviceC:8082/graphql
+      OTEL_SERVICE_NAME: serviceA
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
     ports:
-      - "8082:8082"
+      - "8080:8080"
     volumes:
       # ホスト側の opentelemetry-javaagent.jar をコンテナにマウント
       # 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
@@ -43,4 +43,4 @@ networks:
     name: observability-network
 
 volumes:
-  c_postgres_data:
+  a_postgres_data:

@@ -1,49 +1,36 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
-    container_name: serviceB-postgres
+    container_name: serviceC-postgres
     environment:
-      POSTGRES_DB: service-b
-      POSTGRES_USER: service-b
-      POSTGRES_PASSWORD: service-b
+      POSTGRES_DB: service-c
+      POSTGRES_USER: service-c
+      POSTGRES_PASSWORD: service-c
     ports:
-      - "25432:5432"
+      - "35432:5432"
     volumes:
-      - b_postgres_data:/var/lib/postgresql/data
+      - c_postgres_data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:7-alpine
-    container_name: serviceB-redis
-    ports:
-      - "26379:6379"
-    volumes:
-      - b_redis_data:/data
-
-  serviceb:
+  servicec:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: serviceB
+    container_name: serviceC
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-b
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      OTEL_SERVICE_NAME: serviceB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service-c
+      OTEL_SERVICE_NAME: serviceC
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
     ports:
-      - "8081:8081"
+      - "8082:8082"
     volumes:
       # ホスト側の opentelemetry-javaagent.jar をコンテナにマウント
       # 複数のサービスで共通で opentelemetry-javaagent.jar を使用するため一つ上のディレクトリに配置する
       - ../opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar:ro
     depends_on:
       - postgres
-      - redis
     networks:
       - default
       - observability
@@ -54,5 +41,4 @@ networks:
     name: observability-network
 
 volumes:
-  b_postgres_data:
-  b_redis_data:
+  c_postgres_data:

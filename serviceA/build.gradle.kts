@@ -69,7 +69,7 @@ tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
 		"-Dotel.service.name=serviceA",
 		"-Dotel.exporter.otlp.endpoint=http://localhost:4317",
 		"-Dotel.exporter.otlp.protocol=grpc",
-		"-Dotel.metrics.exporter=none",
-		"-Dotel.logs.exporter=none",
+		"-Dotel.metrics.exporter=otlp",
+		"-Dotel.logs.exporter=otlp",
 	)
 }

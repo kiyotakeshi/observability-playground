@@ -1,0 +1,59 @@
+# config/grafana/datasources/datasources.yaml
+apiVersion: 1
+
+datasources:
+    # Prometheus
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus:9090
+      uid: prometheus
+      isDefault: true
+      jsonData:
+          httpMethod: POST
+          exemplarTraceIdDestinations:
+              - datasourceUid: tempo
+                name: trace_id
+
+    # Tempo
+    - name: Tempo
+      type: tempo
+      access: proxy
+      url: http://tempo:3200
+      uid: tempo
+      jsonData:
+          nodeGraph:
+              enabled: true
+          search:
+              hide: false
+          lokiSearch:
+              datasourceUid: loki
+          tracesToLogs:
+              datasourceUid: loki
+              filterByTraceID: true
+              filterBySpanID: true
+              mapTagNamesEnabled: true
+              mappedTags:
+                  - key: service.name
+                    value: service
+                  - key: deployment.environment
+                    value: environment
+              spanStartTimeShift: '-1h'
+              spanEndTimeShift: '1h'
+
+    # Loki
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki:3100
+      uid: loki
+      jsonData:
+          derivedFields:
+              - datasourceUid: tempo
+                matcherRegex: '"trace_id":"([^"]+)"'
+                name: TraceID
+                url: '$${__value.raw}'
+              - datasourceUid: tempo
+                matcherRegex: '"span_id":"([^"]+)"'
+                name: SpanID
+                url: '$${__value.raw}'

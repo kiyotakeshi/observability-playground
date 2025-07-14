@@ -43,6 +43,13 @@ scrape_configs:
       static_configs:
           - targets: ['grafana:3000']
 
+    # ServiceA のメトリクス
+    - job_name: 'serviceA'
+      static_configs:
+          - targets: ['host.docker.internal:8080']
+      metrics_path: '/actuator/prometheus'
+      scrape_interval: 30s
+
 # Exemplar設定を有効化（トレースとの連携用）
 storage:
     exemplars:

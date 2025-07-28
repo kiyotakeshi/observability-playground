@@ -75,3 +75,42 @@ traceparent = 00-3fb8cc0dbd3f15198bb404252ce8de18-1aa275c7c7ad5df6-01
 - そのため送信側のログでは `traceparent` ヘッダーが見えないが、受信側では正常に確認できる
 
 この仕組みにより、手動でのヘッダー管理なしに分散トレーシングが自動的に動作します。
+
+## サービス間連携シーケンス図
+
+```mermaid
+sequenceDiagram
+    participant Client as Client
+    participant ServiceA as ServiceA<br/>(Spring Boot + Java Agent)
+    participant ServiceB as ServiceB<br/>(Spring Boot + Java Agent)
+    participant ServiceC as ServiceC<br/>(Spring Boot + Java Agent)
+    
+    Note over ServiceA, ServiceC: Java Agent による自動計装で traceparent ヘッダーが自動付与される
+    
+    Client->>ServiceA: POST /employees/{id}/deals
+    activate ServiceA
+    
+    Note over ServiceA: 1. Employee 存在チェック (ローカル DB)
+    ServiceA->>ServiceA: employeeRepository.existsById()
+    
+    Note over ServiceA: 2. Company 存在チェック (REST API)
+    ServiceA->>ServiceB: GET /companies/{id}
+    Note right of ServiceA: Java Agent が traceparent ヘッダーを自動付与<br/>00-{trace_id}-{span_id}-01
+    activate ServiceB
+    
+    ServiceB-->>ServiceA: CompanyResponse
+    deactivate ServiceB
+    
+    Note over ServiceA: 3. Deal 作成 (GraphQL)
+    ServiceA->>ServiceC: GraphQL: createDeal mutation
+    Note right of ServiceA: Java Agent が traceparent ヘッダーを自動付与<br/>同一 trace_id, 新しい span_id
+    activate ServiceC
+    
+    ServiceC-->>ServiceA: DealGraphQLResponse
+    deactivate ServiceC
+    
+    ServiceA-->>Client: CreateDealResponse
+    deactivate ServiceA
+    
+    Note over ServiceA, ServiceC: W3C Trace Context 仕様に準拠<br/>同一 Trace ID で全体のトランザクションを追跡<br/>各サービス間通信は個別の Span として記録
+```

@@ -3,16 +3,23 @@ package observability.com.example.serviceC.controller
 import observability.com.example.serviceC.codegen.types.Deal
 import observability.com.example.serviceC.codegen.types.DealInput
 import observability.com.example.serviceC.service.DealService
+import org.slf4j.LoggerFactory
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
+import graphql.schema.DataFetchingEnvironment
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import java.math.BigDecimal
 
 @Controller
 class DealController(
     private val dealService: DealService
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(DealController::class.java)
+    }
     
     @QueryMapping
     fun deals(): List<Deal> {
@@ -49,6 +56,16 @@ class DealController(
 
     @MutationMapping
     fun createDeal(@Argument input: DealInput): Deal {
+        val requestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
+        val request = requestAttributes?.request
+        
+        if (request != null) {
+            logger.info("[serviceC] 受信したリクエストヘッダー:")
+            request.headerNames.asSequence().forEach { headerName ->
+                logger.info("[serviceC] Header: $headerName = ${request.getHeader(headerName)}")
+            }
+        }
+        
         val createdDeal = dealService.createDeal(
             title = input.title,
             description = input.description,

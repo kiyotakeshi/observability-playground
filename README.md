@@ -8,6 +8,14 @@ curl -O --location https://github.com/open-telemetry/opentelemetry-java-instrume
 
 ## run
 
+serviceA, B, C runs as container with related middleware(Postgres, Redis)
+
 ```sh
-mise run
+mise run start
 ```
+
+## run service individually
+
+- [serviceA README](./serviceA/README.md)
+- [serviceB README](./serviceB/README.md)
+- [serviceC README](./serviceC/README.md)
